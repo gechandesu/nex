@@ -1,0 +1,23 @@
+Usage: nex [command] [FILE]
+
+Commands:
+    d, dir      print notes path.
+    o, open     open file via xdg-open.
+    ls          print dir tree of notes path.
+    lsf         print list of files in notes path.
+    lsd         print list of directories in notes path.
+    s, search   search in notes via 'grep --color=always -rni'.
+    g, grep     search in notes via custom grep.
+    h, help     print this help message and exit.
+
+Options:
+    -trace              enable debug mode.
+    -no-notes-path      do not append notes_path to filenames.
+    -no-chdir           do not perform chdir on running commands.
+    -grep-raw           do not add any arguments to grep_args.
+    -grep-no-color      do not add '--color=always' argument to grep_args.
+    -grep-no-recursive  do not add '-rn' arguments to grep_args.
+
+Environment:
+    NPATH       path to directory with notes (required).
+    EDITOR      text editor to use.

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# n! (notes!, nex, nexclamation) completion script.
+
+NPATH="${NPATH:-$HOME/Documents}"
+
+_n_list_dirs() {
+    find "$NPATH" -type d -exec echo {}/ \; | sed -E "s%$NPATH/?%%g;/^$/d";
+}
+
+_n_list_files() {
+    find "$NPATH" -type f | sed -E "s%$NPATH/?%%g;/^$/d"
+}
+
+_n_get_opts() {
+    local all_opts="$1"
+
+    # Find matched opts.
+    local used_opts="$(echo "${COMP_WORDS[@]} $all_opts" \
+        | tr ' ' '\n' | sort | uniq -d \
+    )"
+
+    if [ "$used_opts" ]; then
+        # Delete 'help' option.
+        all_opts="$(sed 's%help%%' <<< "$all_opts")"
+        # Delete opts if match.
+        for opt in $used_opts; do
+            all_opts="$(sed "s%$opt%%" <<< "$all_opts")"
+        done
+    fi
+    echo "$all_opts"
+}
+
+_nexclamation() {
+    local cur prev
+    cur=${COMP_WORDS[COMP_CWORD]}
+    prev=${COMP_WORDS[COMP_CWORD-1]}
+
+    case ${COMP_CWORD} in
+        1)  # Commands and options
+            COMPREPLY=($(compgen -W \
+                "-v --version -h --help
+                q quick s search l last mkdir ls lsd rm i info
+                $(_n_list_dirs) $(_n_list_files)" -- ${cur}))
+            ;;
+        2)  # Subcommand completion
+            case ${prev} in
+                ls) COMPREPLY=($(compgen -W "$(_n_list_dirs)" -- ${cur}))
+                    ;;
+                rm) COMPREPLY=($(compgen -W "-f --force
+                    $(_n_list_dirs) $(_n_list_files)" -- ${cur}))
+                    ;;
+                i|info) COMPREPLY=($(compgen -W "$(_n_list_files)" -- ${cur}))
+                    ;;
+                *) COMPREPLY=()
+                    ;;
+            esac;;
+        *)  # Complete file and directory names
+            case ${COMP_WORDS[2]} in
+                *)
+                    COMPREPLY=($(compgen -W \
+                    "$(_n_get_opts "$(_n_list_dirs) $(_n_list_files)")" -- ${cur}))
+                    ;;
+            esac;;
+    esac
+}
+
+complete -F _nexclamation nexclamation
+complete -F _nexclamation nex
+complete -F _nexclamation n!
