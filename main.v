@@ -21,26 +21,16 @@ fn main() {
 	mut pref := Preferences{}
 	argv := arguments()[1..]
 	opts := cmdline.only_options(argv)
-	match true {
-		'-trace' in opts {
-			pref.trace = true
+	for opt in opts {
+		match opt {
+			'-trace' { pref.trace = true }
+			'-no-notes-path' { pref.no_notes_path = true }
+			'-no-chdir' { pref.no_chdir = true }
+			'-grep-raw' { pref.grep_raw = true }
+			'-grep-no-color' { pref.grep_no_color = true }
+			'-grep-no-recursive' { pref.grep_no_recursive = true }
+			else {}
 		}
-		'-no-notes-path' in opts {
-			pref.no_notes_path = true
-		}
-		'-no-chdir' in opts {
-			pref.no_chdir = true
-		}
-		'-grep-raw' in opts {
-			pref.grep_raw = true
-		}
-		'-grep-no-color' in opts {
-			pref.grep_no_color = true
-		}
-		'-grep-no-recursive' in opts {
-			pref.grep_no_recursive = true
-		}
-		else {}
 	}
 	args := cmdline.only_non_options(argv)
 	if args.len == 0 {
@@ -120,6 +110,16 @@ fn main() {
 			result := os.execute_or_exit(cmd)
 			println(result.output.trim_space())
 			return
+		}
+		'p', 'path' {
+			p := os.join_path_single(notes_path, argv[1])
+			if os.is_file(p) {
+				println(p)
+				return
+			} else {
+				eprintln('E: ${p} is not file or does not exist')
+				exit(1)
+			}
 		}
 		'h', 'help' {
 			println(help.to_string().trim_space())

@@ -8,6 +8,7 @@ Commands:
     lsd         print list of directories in notes path.
     s, search   search in notes via 'grep --color=always -rni'.
     g, grep     search in notes via custom grep.
+    p, path     print absolute path to file.
     h, help     print this help message and exit.
 
 Options:
