@@ -1,4 +1,4 @@
-Usage: nex [command] [FILE]
+Usage: nex [options] [command] [filepath]
 
 Commands:
     d, dir      print notes path.
